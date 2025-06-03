@@ -105,7 +105,7 @@ rag_chain = create_retrieval_chain(retriever, question_answer_chain)
 
 # Place agent inside a streamlit application:
 
-if prompt := st.chat_input("What is the goal of CA 30x30?"):
+if prompt := st.chat_input("What are the most cost-effective prevention methods for elephants raiding my crops?"):
     with st.chat_message("user"):
         st.markdown(prompt)
 
