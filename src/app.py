@@ -63,30 +63,39 @@ docs = pdf_loader('hwc/')
 from langchain_openai import ChatOpenAI
 llm = ChatOpenAI(model = "llama3", api_key = api_key, base_url = "https://llm.nrp-nautilus.io",  temperature=0)
 ## Cirrus instead:
-embedding = OpenAIEmbeddings(
-                 model = "cirrus",
-                 api_key = cirrus_key, 
-                 base_url = "https://llm.cirrus.carlboettiger.info/v1",
-)
+
 
 
 
 # Build a retrival agent
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 splits = text_splitter.split_documents(docs)
-vectorstore = InMemoryVectorStore.from_documents(documents=splits, embedding=embedding)
-retriever = vectorstore.as_retriever()
+
+@st.cache_data
+def vector_store(_splits):
+    embedding = OpenAIEmbeddings(
+                 model = "cirrus",
+                 api_key = cirrus_key, 
+                 base_url = "https://llm.cirrus.carlboettiger.info/v1",
+    )
+    vectorstore = InMemoryVectorStore.from_documents(documents=_splits, embedding=embedding)
+    retriever = vectorstore.as_retriever()
+    return retriever
+
+retriever = vector_store(splits)
 
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 system_prompt = (
     "You are an assistant for question-answering tasks. "
-    "Use the following pieces of retrieved context to answer "
+    "Use the following scientific articles as the retrieved context to answer "
     "the question. If you don't know the answer, say that you "
-    "don't know. Use three sentences maximum and keep the "
+    "don't know. Use up to five sentences maximum and keep the "
     "answer concise."
     "\n\n"
     "{context}"
@@ -112,8 +121,7 @@ if prompt := st.chat_input("What are the most cost-effective prevention methods 
         st.write(results['answer'])
 
         with st.expander("See context matched"):
-            st.write(results['context'][0].page_content)
-            st.write(results['context'][0].metadata)
+            st.write(results['context'])
 
 
 # adapt for memory / multi-question interaction with:
