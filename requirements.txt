@@ -8,7 +8,5 @@ langchain-core
 langchain-core
 langchain_openai 
 langchain-text-splitters
-os
 requests
-zipfile
 pathlib
