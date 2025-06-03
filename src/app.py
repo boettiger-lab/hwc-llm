@@ -72,10 +72,10 @@ from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=300)
 splits = text_splitter.split_documents(docs)
 
-@st.cache_data
+@st.cache_resource
 def vector_store(_splits):
     embedding = OpenAIEmbeddings(
                  model = "cirrus",
