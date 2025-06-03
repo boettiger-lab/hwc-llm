@@ -32,8 +32,6 @@ import requests
 import zipfile
 
 def download_and_unzip(url, output_dir):
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
     response = requests.get(url)
     zip_file_path = os.path.basename(url)
     with open(zip_file_path, 'wb') as f:
