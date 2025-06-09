@@ -54,7 +54,7 @@ embedding = OpenAIEmbeddings(
 
 # Build a retrival agent
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=300)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=5000, chunk_overlap=500)
 splits = text_splitter.split_documents(docs)
 
 from langchain_core.vectorstores import InMemoryVectorStore
